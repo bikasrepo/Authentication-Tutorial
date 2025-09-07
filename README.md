@@ -114,3 +114,109 @@ Security extension to OAuth 2.0 authorization code flow to protect against inter
 
 ### PKCE Flow Mind Map
 
+     [Start PKCE Login Flow]
+               |
+               V
+    [App generates code_verifier]
+               |
+      [Create code_challenge = hash(code_verifier)]
+               |
+               V
+ [Send code_challenge to Auth Server]
+               |
+    [User authenticates successfully]
+               |
+    [Auth Server returns auth code]
+               |
+[App sends auth code + code_verifier]
+               |
+[Server checks match with code_challenge?]
+/
+[Yes] [No]
+Issue token Reject request
+
+
+### Mnemonic for PKCE
+
+**“Secret handshake with a hash”:**  
+- The app creates a secret (code_verifier).  
+- The hash (code_challenge) is shared first.  
+- Server compares handshake secrets before issuing tokens.
+
+---
+
+## 8. OAuth 2.0 Flows Mind Map
+
+               [OAuth 2.0 Flows]
+                      |
+  +-------------------+---------------------+
+  |                   |                     |
+[Authorization Code] [Client Credentials] [Resource Owner Password]
+| | |
+Web/Mobile apps Server-to-server Legacy apps – user shares password
+|
+[PKCE variant for SPAs]
+
+
+
+- **Authorization Code:** User logs in, app exchanges code for token.  
+- **Client Credentials:** App authenticates itself, no user involved.  
+- **Resource Owner Password:** User gives credentials directly to app (not recommended).
+
+---
+
+## 9. Client Credentials Flow Explained
+
+### Flow
+
+- App sends client ID and secret to authorization server token endpoint with `grant_type=client_credentials`.  
+- Server validates credentials and issues an access token.  
+- App uses token in API calls.
+
+### Use Case
+
+- Backend services or daemons accessing APIs without user interaction.
+
+---
+
+## 10. Comparing Client Credentials with JWT Grant
+
+| Feature                  | Client Credentials                  | JWT Bearer Grant                                      |
+|--------------------------|-----------------------------------|------------------------------------------------------|
+| Authentication           | Client ID and Secret              | Signed JWT assertion (client assertion)              |
+| Security                 | Shared secret                     | Asymmetric keys (public/private)                      |
+| Claims                   | Basic authentication             | Can include custom claims in JWT                      |
+| Use Case                 | Server-to-server                  | Delegated trust, federation, advanced scenarios       |
+
+**Explanation:**
+
+- Client Credentials uses a simple client ID and secret for authentication.  
+- JWT Bearer grant uses a signed JSON Web Token assertion for more secure, federated, or delegated trust scenarios.
+
+---
+
+## 11. Ping Identity Certificates for Token Verification
+
+- Public keys/certificates for token signature verification are exposed via the **JWKS URI** in the PingOne OpenID configuration endpoint.  
+- Download certificate(s) from `jwks_uri` and share with downstream systems for signature validation.  
+- Optionally, PingFederate admin can export signing certificates for manual configuration.
+
+---
+
+## 12. Related Interview Questions and Answers
+
+**Q1:** What is Ping Identity?  
+**A1:** Enterprise IAM with SSO, MFA, OAuth 2.0, SAML support.
+
+**Q2:** Explain PKCE.  
+**A2:** OAuth extension preventing auth code interception via code verifier & challenge.
+
+**Q3:** What’s the difference between Client Credentials and JWT grant?  
+**A3:** Client Credentials uses client secret; JWT grant uses signed assertions with public/private keys.
+
+**Q4:** How to use Ping Identity certificates for token validation?  
+**A4:** Obtain from JWKS URI or admin console export; use for verifying JWT signatures.
+
+---
+
+*End of Document*
